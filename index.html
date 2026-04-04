@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TM Sparrechner">
+<title>Thermomix® Sparrechner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --warm-white: #FFF9F2;
+    --terracotta: #C8563A;
+    --terracotta-light: #F0E4DF;
+    --terracotta-dark: #9E3E27;
+    --sage: #5B7B5F;
+    --sage-light: #E8F0E8;
+    --gold: #B8891A;
+    --gold-light: #FDF3DC;
+    --charcoal: #2C2C2A;
+    --mid: #6B6B68;
+    --light-text: #9A9A97;
+    --border: rgba(44,44,42,0.1);
+    --shadow: 0 2px 20px rgba(44,44,42,0.08);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+
+  header {
+    background: var(--charcoal);
+    color: white;
+    padding: 48px 24px 32px;
+    padding-top: calc(48px + env(safe-area-inset-top, 0px));
+    text-align: center;
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 10px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  header h1 span { color: #E8A87C; }
+
+  .header-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  .main { padding: 24px 16px; max-width: 600px; margin: 0 auto; }
+
+  .section-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin: 28px 0 16px;
+  }
+
+  .section-title:first-child { margin-top: 0; }
+
+  .section-hint {
+    font-size: 12px;
+    color: var(--light-text);
+    margin-bottom: 14px;
+    margin-top: -10px;
+    font-weight: 300;
+  }
+
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  .category-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    background: white;
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  .category-card:active { background: var(--cream); }
+  .category-card.active { border-color: var(--terracotta); background: var(--terracotta-light); }
+
+  .cat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .category-card.active .cat-icon { background: white; }
+
+  .cat-info { flex: 1; min-width: 0; }
+
+  .cat-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin-bottom: 2px;
+  }
+
+  .cat-detail {
+    font-size: 12px;
+    color: var(--mid);
+    font-weight: 300;
+  }
+
+  .cat-right { text-align: right; flex-shrink: 0; }
+
+  .cat-saving {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--sage);
+  }
+
+  .cat-saving-label {
+    font-size: 10px;
+    color: var(--light-text);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .category-card.active .cat-saving { color: var(--terracotta-dark); }
+
+  .stepper-block {
+    margin-top: 12px;
+    display: none;
+    padding: 14px 0 4px;
+    border-top: 1px solid var(--border);
+  }
+
+  .category-card.active .stepper-block { display: block; }
+
+  .stepper-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .stepper-label {
+    font-size: 12px;
+    color: var(--mid);
+    font-weight: 400;
+    flex: 1;
+  }
+
+  .stepper-controls {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--cream);
+  }
+
+  .stepper-btn {
+    width: 40px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--terracotta);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.1s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .stepper-btn:active { background: var(--terracotta-light); }
+  .stepper-btn:disabled { color: var(--light-text); }
+
+  .stepper-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  .stepper-val {
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 44px;
+    text-align: center;
+    color: var(--charcoal);
+    padding: 0 4px;
+  }
+
+  .results-card {
+    background: var(--charcoal);
+    color: white;
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: 24px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 4px 32px rgba(44,44,42,0.25);
+  }
+
+  .results-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 4px;
+  }
+
+  .results-amount {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 1;
+    color: #E8A87C;
+    margin-bottom: 2px;
+  }
+
+  .results-period {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .results-item {
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .results-item-val {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 2px;
+  }
+
+  .results-item-lbl {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .chart-container {
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  .chart-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--mid);
+    margin-bottom: 16px;
+  }
+
+  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+
+  .bar-name {
+    font-size: 12px;
+    color: var(--mid);
+    min-width: 110px;
+    font-weight: 400;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 28px;
+    background: var(--cream);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    background: var(--terracotta);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    min-width: 28px;
+  }
+
+  .bar-fill.inactive { background: var(--border); min-width: 0; }
+
+  .bar-amount {
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+  }
+
+  .amortization-card {
+    background: var(--gold-light);
+    border: 1px solid rgba(184,137,26,0.2);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+
+  .amort-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .amort-title::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  .amort-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .amort-val {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--charcoal);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+
+  .amort-lbl {
+    font-size: 11px;
+    color: var(--mid);
+    font-weight: 300;
+  }
+
+  .price-input-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .price-input-group label {
+    font-size: 14px;
+    color: var(--mid);
+    font-weight: 400;
+    flex: 1;
+  }
+
+  .price-input {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    background: var(--cream);
+    gap: 4px;
+    width: 140px;
+  }
+
+  .price-input span {
+    font-size: 15px;
+    color: var(--mid);
+    font-weight: 300;
+  }
+
+  .price-input input {
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    font-weight: 500;
+    color: var(--charcoal);
+    width: 80px;
+    outline: none;
+    text-align: right;
+  }
+
+  .disclaimer {
+    background: var(--sage-light);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-top: 24px;
+    margin-bottom: 32px;
+  }
+
+  .disclaimer p {
+    font-size: 11px;
+    color: var(--mid);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .disclaimer strong {
+    font-weight: 500;
+    color: var(--sage);
+  }
+
+  .active-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  @media (min-width: 600px) {
+    .main { padding: 32px 24px; }
+    header h1 { font-size: 40px; }
+    .results-amount { font-size: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">Thermomix® TM7</div>
+  <h1>Ihr persönlicher<br><span>Sparrechner</span></h1>
+  <p class="header-sub">Berechnen Sie, wie viel Sie mit dem<br>Thermomix® wöchentlich sparen können.</p>
+</header>
+
+<div class="main">
+
+  <div class="results-card" id="resultsCard">
+    <div class="results-label">Ihre wöchentliche Ersparnis</div>
+    <div class="results-amount" id="totalSaving">0 €</div>
+    <div class="results-period">pro Woche · bei aktiven Kategorien</div>
+    <div class="results-grid">
+      <div class="results-item">
+        <div class="results-item-val" id="yearSaving">0 €</div>
+        <div class="results-item-lbl">Pro Jahr</div>
+      </div>
+      <div class="results-item">
+        <div class="results-item-val" id="activeCats">0</div>
+        <div class="results-item-lbl">Kategorien</div>
+      </div>
+      <div class="results-item">
+        <div class="results-item-val" id="amortTime">–</div>
+        <div class="results-item-lbl">Amortisation</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-title">Kategorien auswählen <span id="activeBadge"></span></p>
+  <p class="section-hint">Tippen Sie auf eine Kategorie, um sie zu aktivieren und anzupassen.</p>
+
+  <div id="categoriesContainer"></div>
+
+  <p class="section-title">Gerätekonfiguration</p>
+
+  <div class="card">
+    <div class="price-input-group" style="margin-bottom:16px;">
+      <label>Kaufpreis Thermomix® TM7</label>
+      <div class="price-input">
+        <span>€</span>
+        <input type="number" id="devicePrice" value="1599" min="0" max="9999" step="1">
+      </div>
+    </div>
+    <div style="height:1px;background:var(--border);margin-bottom:16px;"></div>
+    <div class="price-input-group">
+      <label>Cookidoo® Abo (monatlich)</label>
+      <div class="price-input">
+        <span>€</span>
+        <input type="number" id="subscriptionCost" value="4.99" min="0" max="99" step="0.01">
+      </div>
+    </div>
+  </div>
+
+  <div class="amortization-card" id="amortCard" style="display:none;">
+    <div class="amort-title">Amortisationsrechnung</div>
+    <div class="amort-grid">
+      <div class="amort-item">
+        <div class="amort-val" id="amortMonths">–</div>
+        <div class="amort-lbl">Monate bis Amortisation</div>
+      </div>
+      <div class="amort-item">
+        <div class="amort-val" id="amortYear">–</div>
+        <div class="amort-lbl">Erzielt im Jahr</div>
+      </div>
+      <div class="amort-item">
+        <div class="amort-val" id="net5Year">–</div>
+        <div class="amort-lbl">Netto-Ersparnis 5 Jahre</div>
+      </div>
+      <div class="amort-item">
+        <div class="amort-val" id="net10Year">–</div>
+        <div class="amort-lbl">Netto-Ersparnis 10 Jahre</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-title">Kostenvergleich pro Woche</p>
+
+  <div class="chart-container">
+    <div class="chart-title">Ersparnis nach Kategorie (€/Woche)</div>
+    <div class="bar-chart" id="barChart"></div>
+  </div>
+
+  <div class="disclaimer">
+    <p><strong>Hinweis:</strong> Alle Berechnungen sind Richtwerte und dienen der Veranschaulichung. Die tatsächlichen Ersparnisse hängen von Ihren persönlichen Einkaufsgewohnheiten, regionalen Preisen und der tatsächlichen Nutzungsintensität des Thermomix® ab. Preisvergleiche basieren auf durchschnittlichen deutschen Supermarkt- und Lieferdienstpreisen (Stand 2026). Keine Gewähr für die Richtigkeit der Angaben.</p>
+  </div>
+
+</div>
+
+<script>
+var CATEGORIES = [
+  {
+    id: 'takeaway',
+    icon: '🍕',
+    name: 'Lieferdienste & Takeaway',
+    detail: 'Pizza, Burger, Döner, Sushi etc.',
+    unit: 'Bestellungen/Woche',
+    min: 0, max: 7, step: 1, defaultVal: 1,
+    savingPerUnit: 14.5,
+    description: 'Ø Ersparnis pro Bestellung (statt ~22 € → ~7,50 € Zutaten)',
+  },
+  {
+    id: 'apfelmus',
+    icon: '🍎',
+    name: 'Apfelmus',
+    detail: 'selbstgemachtes Apfelmus statt gekauftem Glas',
+    unit: 'Glas/Woche',
+    min: 0, max: 10, step: 1, defaultVal: 1,
+    savingPerUnit: 0.85,
+    description: 'Ø Ersparnis pro Glas (355 g/Glas)',
+  },
+  {
+    id: 'softeis',
+    icon: '🍦',
+    name: 'Softeis',
+    detail: 'selbstgemachtes Softeis statt gekauftem',
+    unit: 'Portion/Woche',
+    min: 0, max: 10, step: 1, defaultVal: 1,
+    savingPerUnit: 2,
+    description: 'Ø Ersparnis pro Portion',
+  },
+  {
+    id: 'bread',
+    icon: '🍞',
+    name: 'Brot & Backwaren',
+    detail: 'Brot, Brötchen, Kuchen, Muffins',
+    unit: 'Brote/Woche',
+    min: 0, max: 10, step: 1, defaultVal: 2,
+    savingPerUnit: 2,
+    description: 'Ø 2,00 € Ersparnis pro Brot gegenüber Bäckerei',
+  },
+  {
+    id: 'milk',
+    icon: '🌱',
+    name: 'Pflanzenmilch',
+    detail: 'Hafermilch, Mandelmilch, Sojamilch',
+    unit: 'Liter/Woche',
+    min: 0, max: 10, step: 1, defaultVal: 0,
+    savingPerUnit: 1.0,
+    description: 'Ø 1,00 € Ersparnis pro Liter selbst gemacht',
+  },
+  {
+    id: 'yogurt',
+    icon: '🫙',
+    name: 'Naturjoghurt',
+    detail: 'Naturjoghurt selbst gemacht',
+    unit: 'kg/Woche',
+    min: 0, max: 5, step: 0.5, defaultVal: 1,
+    savingPerUnit: 1.65,
+    description: 'Ø 1,65 € Ersparnis pro kg selbst gemacht',
+  },
+  {
+    id: 'babyfood',
+    icon: '👶',
+    name: 'Babynahrung',
+    detail: 'Breie, Gemüse, Obstpürees',
+    unit: 'Gläser/Woche',
+    min: 0, max: 30, step: 1, defaultVal: 10,
+    savingPerUnit: 1.2,
+    description: 'Ø 1,20 € Ersparnis pro Glas gegenüber Fertigbrei',
+  },
+  {
+    id: 'snacks',
+    icon: '🍫',
+    name: 'Snacks & Müsliriegel',
+    detail: 'Müsli, Riegel, Nussmischungen',
+    unit: 'Packungen/Woche',
+    min: 0, max: 10, step: 1, defaultVal: 2,
+    savingPerUnit: 2.5,
+    description: 'Ø 2,50 € Ersparnis pro Packung',
+  },
+  {
+    id: 'sauces',
+    icon: '🫙',
+    name: 'Soßen & Dips',
+    detail: 'Pestos, Hummus, Aufstriche, Suppen',
+    unit: 'Gläser/Woche',
+    min: 0, max: 10, step: 1, defaultVal: 1,
+    savingPerUnit: 2.8,
+    description: 'Ø 2,80 € Ersparnis pro Glas/Portion',
+  },
+  {
+    id: 'energy',
+    icon: '⚡',
+    name: 'Energie (Strom)',
+    detail: 'Weniger Verbrauch als Herd + Mixer',
+    unit: 'Kochvorgänge/Woche',
+    min: 0, max: 21, step: 1, defaultVal: 5,
+    savingPerUnit: 0.3,
+    description: 'Ø 0,30 € Ersparnis pro Kochvorgang',
+  },
+  {
+    id: 'waste',
+    icon: '♻️',
+    name: 'Lebensmittelabfall',
+    detail: 'Weniger Wegwurf durch bessere Planung',
+    unit: '€ Einkauf/Woche',
+    min: 0, max: 300, step: 10, defaultVal: 80,
+    savingPerUnit: 0.1,
+    description: 'Ø 10% des wöchentlichen Einkaufswerts werden gespart',
+  },
+];
+
+var state = { active: {}, values: {} };
+
+CATEGORIES.forEach(function(cat) {
+  state.active[cat.id] = false;
+  state.values[cat.id] = cat.defaultVal;
+});
+
+function getSaving(cat) {
+  return state.values[cat.id] * cat.savingPerUnit;
+}
+
+function fmt(n) {
+  if (Math.abs(n) < 10) return n.toFixed(2).replace('.', ',') + ' €';
+  return Math.round(n).toLocaleString('de-DE') + ' €';
+}
+
+function displayVal(v) {
+  return Number.isInteger(v) ? String(v) : v.toFixed(1).replace('.', ',');
+}
+
+function calcTotal() {
+  var total = 0;
+  CATEGORIES.forEach(function(cat) {
+    if (state.active[cat.id]) total += getSaving(cat);
+  });
+  return total;
+}
+
+function update() {
+  var totalWeek = calcTotal();
+  var totalYear = totalWeek * 52;
+  var activeCount = CATEGORIES.filter(function(c) { return state.active[c.id]; }).length;
+  var devicePrice = parseFloat(document.getElementById('devicePrice').value) || 1599;
+  var subCostMonth = parseFloat(document.getElementById('subscriptionCost').value) || 4.99;
+  var netWeekly = totalWeek - (subCostMonth / 4.33);
+
+  document.getElementById('totalSaving').textContent = fmt(totalWeek);
+  document.getElementById('yearSaving').textContent = fmt(totalYear);
+  document.getElementById('activeCats').textContent = activeCount;
+
+  var amortCard = document.getElementById('amortCard');
+  if (netWeekly > 0) {
+    var months = (devicePrice / netWeekly) / 4.33;
+    var years  = (devicePrice / netWeekly) / 52;
+    document.getElementById('amortMonths').textContent = Math.ceil(months);
+    document.getElementById('amortYear').textContent = new Date().getFullYear() + Math.ceil(years);
+    document.getElementById('net5Year').textContent  = fmt(netWeekly * 52 * 5  - devicePrice);
+    document.getElementById('net10Year').textContent = fmt(netWeekly * 52 * 10 - devicePrice);
+    document.getElementById('amortTime').textContent = Math.ceil(months) + ' Mo.';
+    amortCard.style.display = 'block';
+  } else {
+    document.getElementById('amortTime').textContent = '–';
+    amortCard.style.display = 'none';
+  }
+
+  var badge = document.getElementById('activeBadge');
+  badge.innerHTML = activeCount > 0 ? '<span class="active-count">' + activeCount + '</span>' : '';
+
+  updateChart();
+}
+
+function updateChart() {
+  var container = document.getElementById('barChart');
+  var activeCats = CATEGORIES.filter(function(c) { return state.active[c.id]; });
+  var maxSaving = Math.max.apply(null, activeCats.map(function(c) { return getSaving(c); }).concat([1]));
+
+  container.innerHTML = '';
+  CATEGORIES.forEach(function(cat) {
+    var saving = state.active[cat.id] ? getSaving(cat) : 0;
+    var pct = (state.active[cat.id] && saving > 0) ? Math.max((saving / maxSaving) * 100, 4) : 0;
+    var row = document.createElement('div');
+    row.className = 'bar-row';
+    var fillClass = 'bar-fill' + (!state.active[cat.id] ? ' inactive' : '');
+    var inner = state.active[cat.id] ? '<span class="bar-amount">' + fmt(saving) + '</span>' : '';
+    row.innerHTML =
+      '<div class="bar-name">' + cat.icon + ' ' + cat.name.split(' ')[0] + '</div>' +
+      '<div class="bar-track"><div class="' + fillClass + '" style="width:' + pct + '%">' + inner + '</div></div>';
+    container.appendChild(row);
+  });
+}
+
+function toggleCategory(id) {
+  state.active[id] = !state.active[id];
+  var card = document.getElementById('card-' + id);
+  if (state.active[id]) {
+    card.classList.add('active');
+  } else {
+    card.classList.remove('active');
+  }
+  update();
+}
+
+function stepValue(id, direction) {
+  var cat = null;
+  for (var i = 0; i < CATEGORIES.length; i++) {
+    if (CATEGORIES[i].id === id) { cat = CATEGORIES[i]; break; }
+  }
+  var next = Math.round((state.values[id] + direction * cat.step) * 1000) / 1000;
+  if (next < cat.min || next > cat.max) return;
+  state.values[id] = next;
+  document.getElementById('val-' + id).textContent = displayVal(next);
+  document.getElementById('saving-' + id).textContent = fmt(getSaving(cat));
+  updateButtonStates();
+  update();
+}
+
+function updateButtonStates() {
+  CATEGORIES.forEach(function(cat) {
+    var minBtn = document.getElementById('btn-minus-' + cat.id);
+    var maxBtn = document.getElementById('btn-plus-'  + cat.id);
+    if (!minBtn || !maxBtn) return;
+    minBtn.disabled = state.values[cat.id] <= cat.min;
+    maxBtn.disabled = state.values[cat.id] >= cat.max;
+  });
+}
+
+function buildCards() {
+  var container = document.getElementById('categoriesContainer');
+  container.innerHTML = '';
+
+  CATEGORIES.forEach(function(cat) {
+    var card = document.createElement('div');
+    card.className = 'category-card' + (state.active[cat.id] ? ' active' : '');
+    card.id = 'card-' + cat.id;
+
+    var v = state.values[cat.id];
+
+    card.innerHTML =
+      '<div class="cat-icon">' + cat.icon + '</div>' +
+      '<div class="cat-info">' +
+        '<div class="cat-name">' + cat.name + '</div>' +
+        '<div class="cat-detail">' + cat.detail + '</div>' +
+        '<div class="stepper-block">' +
+          '<div class="stepper-row">' +
+            '<span class="stepper-label">' + cat.unit + '</span>' +
+            '<div class="stepper-controls">' +
+              '<button class="stepper-btn" id="btn-minus-' + cat.id + '">−</button>' +
+              '<div class="stepper-divider"></div>' +
+              '<span class="stepper-val" id="val-' + cat.id + '">' + displayVal(v) + '</span>' +
+              '<div class="stepper-divider"></div>' +
+              '<button class="stepper-btn" id="btn-plus-' + cat.id + '">+</button>' +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--light-text);font-weight:300;">' + cat.description + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cat-right">' +
+        '<div class="cat-saving" id="saving-' + cat.id + '">' + fmt(getSaving(cat)) + '</div>' +
+        '<div class="cat-saving-label">pro Woche</div>' +
+      '</div>';
+
+    container.appendChild(card);
+
+    (function(catId) {
+      document.getElementById('card-' + catId).addEventListener('click', function(e) {
+        if (e.target.tagName === 'BUTTON') return;
+        toggleCategory(catId);
+      });
+      document.getElementById('btn-minus-' + catId).addEventListener('click', function(e) {
+        e.stopPropagation();
+        stepValue(catId, -1);
+      });
+      document.getElementById('btn-plus-' + catId).addEventListener('click', function(e) {
+        e.stopPropagation();
+        stepValue(catId, 1);
+      });
+    })(cat.id);
+  });
+
+  updateButtonStates();
+}
+
+document.getElementById('devicePrice').addEventListener('input', update);
+document.getElementById('subscriptionCost').addEventListener('input', update);
+
+buildCards();
+update();
+</script>
+</body>
+</html>
