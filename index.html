@@ -201,14 +201,14 @@
     align-items: center;
     border: 1.5px solid var(--border);
     border-radius: 10px;
-    overflow: hidden;
+    overflow: visible;
     background: var(--cream);
+    width: 160px;
     flex-shrink: 0;
-    width: 100%;
   }
 
   .stepper-btn {
-    flex: 0 0 56px;
+    width: 48px;
     height: 44px;
     border: none;
     background: transparent;
@@ -222,6 +222,7 @@
     transition: background 0.1s;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
+    flex-shrink: 0;
   }
 
   .stepper-btn:active { background: var(--terracotta-light); }
@@ -240,7 +241,7 @@
     font-weight: 600;
     text-align: center;
     color: var(--charcoal);
-    padding: 0 8px;
+    padding: 0 4px;
   }
 
   /* Price comparison rows */
