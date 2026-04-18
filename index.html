@@ -103,7 +103,7 @@
 
   .category-card {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 16px;
     cursor: pointer;
     user-select: none;
@@ -114,6 +114,7 @@
     background: white;
     border: 1.5px solid var(--border);
     box-shadow: var(--shadow);
+    flex-wrap: wrap;
   }
 
   .category-card:active { background: var(--cream); }
@@ -165,11 +166,15 @@
 
   .category-card.active .cat-saving { color: var(--terracotta-dark); }
 
+  /* negative saving = buying is cheaper */
+  .cat-saving.negative { color: #A33030; }
+
   .stepper-block {
     margin-top: 12px;
     display: none;
     padding: 14px 0 4px;
     border-top: 1px solid var(--border);
+    width: 100%;
   }
 
   .category-card.active .stepper-block { display: block; }
@@ -233,6 +238,95 @@
     color: var(--charcoal);
     padding: 0 4px;
   }
+
+  /* Price comparison rows */
+  .price-compare-block {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(44,44,42,0.07);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .price-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .price-field-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--light-text);
+    font-weight: 500;
+  }
+
+  .price-field-label.buy-label { color: var(--mid); }
+  .price-field-label.make-label { color: var(--sage); }
+
+  .price-field-input {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px;
+    gap: 4px;
+  }
+
+  .price-field-input.buy { border-color: rgba(44,44,42,0.15); }
+  .price-field-input.make { border-color: rgba(91,123,95,0.3); }
+
+  .price-field-input span {
+    font-size: 13px;
+    color: var(--mid);
+  }
+
+  .price-field-input input {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    font-weight: 500;
+    color: var(--charcoal);
+    width: 100%;
+    outline: none;
+    text-align: right;
+  }
+
+  .price-field-unit {
+    font-size: 10px;
+    color: var(--light-text);
+    font-weight: 300;
+    text-align: right;
+  }
+
+  .saving-row {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    margin-top: 2px;
+  }
+
+  .saving-row-label {
+    font-size: 12px;
+    color: var(--mid);
+    font-weight: 400;
+  }
+
+  .saving-row-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--sage);
+  }
+
+  .saving-row-value.negative { color: #A33030; }
 
   .results-card {
     background: var(--charcoal);
@@ -347,6 +441,7 @@
   }
 
   .bar-fill.inactive { background: var(--border); min-width: 0; }
+  .bar-fill.negative-bar { background: #C84040; }
 
   .bar-amount {
     font-size: 11px;
@@ -478,6 +573,41 @@
     vertical-align: middle;
   }
 
+  .priceless-block {
+    margin-top: 12px;
+    padding: 14px 0 4px;
+    border-top: 1px solid var(--border);
+    width: 100%;
+    display: none;
+  }
+  .category-card.active .priceless-block { display: block; }
+
+  .priceless-banner {
+    background: var(--gold-light);
+    border: 1px solid rgba(184,137,26,0.25);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .priceless-star { font-size: 20px; flex-shrink: 0; }
+  .priceless-text { font-size: 12px; color: var(--gold); font-weight: 500; line-height: 1.4; }
+
+  .time-saved-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+  }
+  .time-saved-label { font-size: 12px; color: var(--mid); }
+  .time-saved-value { font-size: 14px; font-weight: 600; color: var(--gold); }
+
+  .cat-saving.priceless { color: var(--gold); font-size: 13px; }
+
   @media (min-width: 600px) {
     .main { padding: 32px 24px; }
     header h1 { font-size: 40px; }
@@ -516,7 +646,7 @@
   </div>
 
   <p class="section-title">Kategorien auswählen <span id="activeBadge"></span></p>
-  <p class="section-hint">Tippen Sie auf eine Kategorie, um sie zu aktivieren und anzupassen.</p>
+  <p class="section-hint">Tippen Sie auf eine Kategorie, um sie zu aktivieren und die Preise anzupassen.</p>
 
   <div id="categoriesContainer"></div>
 
@@ -576,6 +706,9 @@
 </div>
 
 <script>
+// buyPrice = Kaufpreis pro Einheit im Laden
+// makePrice = Zutatenkosten pro Einheit selbst gemacht
+// savingPerUnit wird jetzt dynamisch berechnet: buyPrice - makePrice
 var CATEGORIES = [
   {
     id: 'takeaway',
@@ -583,69 +716,76 @@ var CATEGORIES = [
     name: 'Lieferdienste & Takeaway',
     detail: 'Pizza, Burger, Döner, Sushi etc.',
     unit: 'Bestellungen/Woche',
+    unitShort: 'pro Bestellung',
     min: 0, max: 100, step: 1, defaultVal: 1,
-    savingPerUnit: 14.5,
-    description: 'Ø Ersparnis pro Bestellung (statt ~22 € → ~7,50 € Zutaten)',
+    buyPrice: 22.00,
+    makePrice: 7.50,
   },
   {
     id: 'marmelade',
     icon: '🍓',
     name: 'Marmelade',
-    detail: 'Aufstriche süss',
-    unit: 'Glas/Woche',
+    detail: 'Aufstriche süß (330 g Glas)',
+    unit: 'Gläser/Woche',
+    unitShort: 'pro Glas',
     min: 0, max: 100, step: 1, defaultVal: 1,
-    savingPerUnit: 2.5,
-    description: 'Ø Ersparnis pro Glas',
+    buyPrice: 3.49,
+    makePrice: 0.99,
   },
   {
     id: 'bruehe',
     icon: '🍲',
     name: 'Gemüsepaste',
     detail: 'Gemüsepaste für Suppen, Saucen etc.',
-    unit: 'Glas/Woche',
+    unit: 'Gläser/Woche',
+    unitShort: 'pro Glas',
     min: 0, max: 100, step: 1, defaultVal: 1,
-    savingPerUnit: 2,
-    description: 'Ø Ersparnis pro Glas (statt ~3 € → ~3,50 € Zutaten)',
+    buyPrice: 3.99,
+    makePrice: 1.50,
   },
   {
     id: 'smoothies',
     icon: '🍎',
     name: 'Smoothies',
-    detail: 'selbstgemachte Smoothies statt gekauftem',
-    unit: 'Glas/Woche',
+    detail: 'Selbstgemacht statt gekauft',
+    unit: 'Gläser/Woche',
+    unitShort: 'pro Glas',
     min: 0, max: 100, step: 1, defaultVal: 1,
-    savingPerUnit: 4,
-    description: 'Ø Ersparnis pro Glas ',
+    buyPrice: 5.49,
+    makePrice: 1.50,
   },
   {
     id: 'semmelmehl',
     icon: '🍞',
     name: 'Semmelmehl',
-    detail: 'selbstgemachtes Semmelmehl statt gekauftem',
-    unit: 'Glas/Woche',
+    detail: 'Selbstgemacht statt gekauft',
+    unit: 'Pakete/Woche',
+    unitShort: 'pro Paket',
     min: 0, max: 100, step: 1, defaultVal: 1,
-    savingPerUnit: 1,
-    description: 'Ø Ersparnis pro Paket',
+    buyPrice: 1.79,
+    makePrice: 0.50,
   },
   {
     id: 'apfelmus',
-    icon: '🍎',
+    icon: '🍏',
     name: 'Apfelmus',
-    detail: 'selbstgemachtes Apfelmus statt gekauftem Glas',
-    unit: 'Glas/Woche',
+    detail: 'Selbstgemacht statt gekauft (355 g)',
+    unit: 'Gläser/Woche',
+    unitShort: 'pro Glas',
     min: 0, max: 100, step: 1, defaultVal: 1,
-    savingPerUnit: 0.85,
-    description: 'Ø Ersparnis pro Glas (355 g/Glas)',
+    buyPrice: 1.69,
+    makePrice: 0.84,
   },
   {
     id: 'softeis',
     icon: '🍦',
     name: 'Milcheis',
-    detail: 'selbstgemachtes Eis statt gekauftem',
-    unit: '1liter',
+    detail: 'Selbstgemacht statt gekauft',
+    unit: 'Liter/Woche',
+    unitShort: 'pro Liter',
     min: 0, max: 100, step: 1, defaultVal: 1,
-    savingPerUnit: 2.49,
-    description: 'Ø Ersparnis pro Portion',
+    buyPrice: 5.49,
+    makePrice: 3.00,
   },
   {
     id: 'bread',
@@ -653,9 +793,10 @@ var CATEGORIES = [
     name: 'Brot & Backwaren',
     detail: 'Brot, Brötchen, Kuchen, Muffins',
     unit: 'Brote/Woche',
+    unitShort: 'pro Brot',
     min: 0, max: 100, step: 1, defaultVal: 2,
-    savingPerUnit: 2,
-    description: 'Ø 2,00 € Ersparnis pro Brot gegenüber Bäckerei',
+    buyPrice: 4.50,
+    makePrice: 2.50,
   },
   {
     id: 'milk',
@@ -663,9 +804,10 @@ var CATEGORIES = [
     name: 'Pflanzenmilch',
     detail: 'Hafermilch, Mandelmilch, Sojamilch',
     unit: 'Liter/Woche',
+    unitShort: 'pro Liter',
     min: 0, max: 100, step: 1, defaultVal: 0,
-    savingPerUnit: 1.0,
-    description: 'Ø 1,00 € Ersparnis pro Liter selbst gemacht',
+    buyPrice: 1.79,
+    makePrice: 0.79,
   },
   {
     id: 'yogurt',
@@ -673,9 +815,10 @@ var CATEGORIES = [
     name: 'Naturjoghurt',
     detail: 'Naturjoghurt selbst gemacht',
     unit: 'kg/Woche',
+    unitShort: 'pro kg',
     min: 0, max: 100, step: 0.5, defaultVal: 1,
-    savingPerUnit: 1.65,
-    description: 'Ø 1,65 € Ersparnis pro kg selbst gemacht',
+    buyPrice: 2.49,
+    makePrice: 0.84,
   },
   {
     id: 'babyfood',
@@ -683,9 +826,10 @@ var CATEGORIES = [
     name: 'Babynahrung',
     detail: 'Breie, Gemüse, Obstpürees',
     unit: 'Gläser/Woche',
+    unitShort: 'pro Glas',
     min: 0, max: 100, step: 1, defaultVal: 10,
-    savingPerUnit: 1.2,
-    description: 'Ø 1,20 € Ersparnis pro Glas gegenüber Fertigbrei',
+    buyPrice: 1.79,
+    makePrice: 0.59,
   },
   {
     id: 'snacks',
@@ -693,9 +837,10 @@ var CATEGORIES = [
     name: 'Snacks & Müsliriegel',
     detail: 'Müsli, Riegel, Nussmischungen',
     unit: 'Packungen/Woche',
+    unitShort: 'pro Packung',
     min: 0, max: 100, step: 1, defaultVal: 2,
-    savingPerUnit: 2.5,
-    description: 'Ø 2,50 € Ersparnis pro Packung',
+    buyPrice: 4.99,
+    makePrice: 2.49,
   },
   {
     id: 'sauces',
@@ -703,9 +848,65 @@ var CATEGORIES = [
     name: 'Soßen & Dips',
     detail: 'Pestos, Hummus, Aufstriche, Suppen',
     unit: 'Gläser/Woche',
+    unitShort: 'pro Glas',
     min: 0, max: 100, step: 1, defaultVal: 1,
-    savingPerUnit: 2.8,
-    description: 'Ø 2,80 € Ersparnis pro Glas/Portion',
+    buyPrice: 3.99,
+    makePrice: 1.19,
+  },
+  {
+    id: 'granola',
+    icon: '🥣',
+    name: 'Granola',
+    detail: 'Selbstgemachtes Müsli / Granola statt gekauft',
+    unit: 'Pakete/Woche',
+    unitShort: 'pro 500 g',
+    min: 0, max: 100, step: 1, defaultVal: 1,
+    buyPrice: 5.99,
+    makePrice: 1.80,
+  },
+  {
+    id: 'waste_fruit',
+    icon: '🍌',
+    name: 'Verwertung: Obst & Kühlschrank',
+    detail: 'Smoothies, Kompott, Suppen aus älterem Obst & Gemüse',
+    unit: 'Portionen/Woche',
+    unitShort: 'pro Portion',
+    min: 0, max: 100, step: 1, defaultVal: 3,
+    buyPrice: 2.50,
+    makePrice: 0.20,
+  },
+  {
+    id: 'ketchup_mayo',
+    icon: '🧴',
+    name: 'Ketchup, Mayo & Soßen',
+    detail: 'Ketchup, Mayonnaise, BBQ-Soße selbst gemacht',
+    unit: 'Flaschen/Woche',
+    unitShort: 'pro Flasche',
+    min: 0, max: 100, step: 1, defaultVal: 1,
+    buyPrice: 3.49,
+    makePrice: 0.90,
+  },
+  {
+    id: 'frozen',
+    icon: '🧊',
+    name: 'Fertigprodukte (Tiefkühl)',
+    detail: 'Lasagne, Suppen, Aufläufe – selbst eingefroren statt Fertiggericht',
+    unit: 'Portionen/Woche',
+    unitShort: 'pro Portion',
+    min: 0, max: 100, step: 1, defaultVal: 2,
+    buyPrice: 4.99,
+    makePrice: 1.50,
+  },
+  {
+    id: 'cake',
+    icon: '🎂',
+    name: 'Kuchen statt Bäcker',
+    detail: 'Torten, Kuchen, Gebäck selbst gebacken',
+    unit: 'Kuchen/Woche',
+    unitShort: 'pro Kuchen',
+    min: 0, max: 100, step: 1, defaultVal: 1,
+    buyPrice: 18.00,
+    makePrice: 5.00,
   },
   {
     id: 'energy',
@@ -713,9 +914,10 @@ var CATEGORIES = [
     name: 'Energie (Strom)',
     detail: 'Weniger Verbrauch als Herd + Mixer',
     unit: 'Kochvorgänge/Woche',
+    unitShort: 'pro Kochvorgang',
     min: 0, max: 100, step: 1, defaultVal: 5,
-    savingPerUnit: 0.3,
-    description: 'Ø 0,30 € Ersparnis pro Kochvorgang',
+    buyPrice: 0.80,
+    makePrice: 0.50,
   },
   {
     id: 'waste',
@@ -723,26 +925,52 @@ var CATEGORIES = [
     name: 'Lebensmittelabfall',
     detail: 'Weniger Wegwurf durch bessere Planung',
     unit: '€ Einkauf/Woche',
+    unitShort: 'pro 10 € Einkauf',
     min: 0, max: 300, step: 10, defaultVal: 80,
-    savingPerUnit: 0.1,
-    description: 'Ø 10% des wöchentlichen Einkaufswerts werden gespart',
+    buyPrice: 10.00,
+    makePrice: 9.00,
+  },
+  {
+    id: 'time',
+    icon: '⏱️',
+    name: 'Zeitersparnis',
+    detail: 'Kochen ohne Rühren & Überwachen – Zeit für Wichtigeres',
+    unit: 'Kochvorgänge/Woche',
+    unitShort: 'pro Vorgang',
+    min: 0, max: 100, step: 1, defaultVal: 5,
+    buyPrice: null,
+    makePrice: null,
+    isPriceless: true,
+    minutesSaved: 25,
   },
 ];
 
-var state = { active: {}, values: {} };
+var state = { active: {}, values: {}, buyPrices: {}, makePrices: {} };
 
 CATEGORIES.forEach(function(cat) {
   state.active[cat.id] = false;
   state.values[cat.id] = cat.defaultVal;
+  state.buyPrices[cat.id] = cat.buyPrice;
+  state.makePrices[cat.id] = cat.makePrice;
 });
 
+function getSavingPerUnit(cat) {
+  if (cat.isPriceless) return 0;
+  return (state.buyPrices[cat.id] || 0) - (state.makePrices[cat.id] || 0);
+}
+
 function getSaving(cat) {
-  return state.values[cat.id] * cat.savingPerUnit;
+  if (cat.isPriceless) return 0;
+  return state.values[cat.id] * getSavingPerUnit(cat);
 }
 
 function fmt(n) {
   if (Math.abs(n) < 10) return n.toFixed(2).replace('.', ',') + ' €';
   return Math.round(n).toLocaleString('de-DE') + ' €';
+}
+
+function fmtPrice(n) {
+  return n.toFixed(2).replace('.', ',') + ' €';
 }
 
 function displayVal(v) {
@@ -787,21 +1015,50 @@ function update() {
   var badge = document.getElementById('activeBadge');
   badge.innerHTML = activeCount > 0 ? '<span class="active-count">' + activeCount + '</span>' : '';
 
+  // Update cat-saving displays for active cards
+  CATEGORIES.forEach(function(cat) {
+    if (cat.isPriceless) {
+      var timeSavedEl = document.getElementById('time-saved-' + cat.id);
+      if (timeSavedEl) {
+        var minutesPerWeek = state.values[cat.id] * cat.minutesSaved;
+        var hoursPerWeek = (minutesPerWeek / 60).toFixed(1).replace('.', ',');
+        timeSavedEl.textContent = hoursPerWeek + ' Std.';
+      }
+      return;
+    }
+    var savingEl = document.getElementById('saving-' + cat.id);
+    if (savingEl) {
+      var s = getSaving(cat);
+      savingEl.textContent = fmt(s);
+      savingEl.className = 'cat-saving' + (s < 0 ? ' negative' : '');
+    }
+    var rowEl = document.getElementById('saving-row-val-' + cat.id);
+    if (rowEl) {
+      var sv = getSavingPerUnit(cat);
+      var total = getSaving(cat);
+      rowEl.textContent = fmt(total) + ' (' + (sv >= 0 ? '+' : '') + fmtPrice(sv) + ' ' + (cat.unitShort || 'pro Einheit') + ')';
+      rowEl.className = 'saving-row-value' + (total < 0 ? ' negative' : '');
+    }
+  });
+
   updateChart();
 }
 
 function updateChart() {
   var container = document.getElementById('barChart');
   var activeCats = CATEGORIES.filter(function(c) { return state.active[c.id]; });
-  var maxSaving = Math.max.apply(null, activeCats.map(function(c) { return getSaving(c); }).concat([1]));
+  var savings = activeCats.map(function(c) { return Math.abs(getSaving(c)); });
+  var maxSaving = Math.max.apply(null, savings.concat([1]));
 
   container.innerHTML = '';
   CATEGORIES.forEach(function(cat) {
     var saving = state.active[cat.id] ? getSaving(cat) : 0;
-    var pct = (state.active[cat.id] && saving > 0) ? Math.max((saving / maxSaving) * 100, 4) : 0;
+    var absSaving = Math.abs(saving);
+    var pct = (state.active[cat.id] && absSaving > 0) ? Math.max((absSaving / maxSaving) * 100, 4) : 0;
+    var isNeg = saving < 0;
     var row = document.createElement('div');
     row.className = 'bar-row';
-    var fillClass = 'bar-fill' + (!state.active[cat.id] ? ' inactive' : '');
+    var fillClass = 'bar-fill' + (!state.active[cat.id] ? ' inactive' : (isNeg ? ' negative-bar' : ''));
     var inner = state.active[cat.id] ? '<span class="bar-amount">' + fmt(saving) + '</span>' : '';
     row.innerHTML =
       '<div class="bar-name">' + cat.icon + ' ' + cat.name.split(' ')[0] + '</div>' +
@@ -830,9 +1087,8 @@ function stepValue(id, direction) {
   if (next < cat.min || next > cat.max) return;
   state.values[id] = next;
   document.getElementById('val-' + id).textContent = displayVal(next);
-  document.getElementById('saving-' + id).textContent = fmt(getSaving(cat));
-  updateButtonStates();
   update();
+  updateButtonStates();
 }
 
 function updateButtonStates() {
@@ -856,35 +1112,101 @@ function buildCards() {
 
     var v = state.values[cat.id];
 
-    card.innerHTML =
-      '<div class="cat-icon">' + cat.icon + '</div>' +
-      '<div class="cat-info">' +
-        '<div class="cat-name">' + cat.name + '</div>' +
-        '<div class="cat-detail">' + cat.detail + '</div>' +
-        '<div class="stepper-block">' +
-          '<div class="stepper-row">' +
-            '<span class="stepper-label">' + cat.unit + '</span>' +
-            '<div class="stepper-controls">' +
-              '<button class="stepper-btn" id="btn-minus-' + cat.id + '">−</button>' +
-              '<div class="stepper-divider"></div>' +
-              '<span class="stepper-val" id="val-' + cat.id + '">' + displayVal(v) + '</span>' +
-              '<div class="stepper-divider"></div>' +
-              '<button class="stepper-btn" id="btn-plus-' + cat.id + '">+</button>' +
+    var innerContent;
+    if (cat.isPriceless) {
+      var minutesPerWeek = v * cat.minutesSaved;
+      var hoursPerWeek = (minutesPerWeek / 60).toFixed(1).replace('.', ',');
+      var hoursPerYear = Math.round(minutesPerWeek * 52 / 60);
+      innerContent =
+        '<div class="cat-info">' +
+          '<div class="cat-name">' + cat.name + '</div>' +
+          '<div class="cat-detail">' + cat.detail + '</div>' +
+          '<div class="priceless-block">' +
+            '<div class="stepper-row">' +
+              '<span class="stepper-label">' + cat.unit + '</span>' +
+              '<div class="stepper-controls">' +
+                '<button class="stepper-btn" id="btn-minus-' + cat.id + '">−</button>' +
+                '<div class="stepper-divider"></div>' +
+                '<span class="stepper-val" id="val-' + cat.id + '">' + displayVal(v) + '</span>' +
+                '<div class="stepper-divider"></div>' +
+                '<button class="stepper-btn" id="btn-plus-' + cat.id + '">+</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="priceless-banner">' +
+              '<span class="priceless-star">✨</span>' +
+              '<div class="priceless-text">Der Thermomix® kocht, während du lebst.<br>Diese Zeit lässt sich nicht in Euro messen.</div>' +
+            '</div>' +
+            '<div class="time-saved-row">' +
+              '<span class="time-saved-label">Ø ' + cat.minutesSaved + ' Min. gespart/Vorgang → diese Woche</span>' +
+              '<span class="time-saved-value" id="time-saved-' + cat.id + '">' + hoursPerWeek + ' Std.</span>' +
+            '</div>' +
+            '<div class="time-saved-row" style="margin-top:6px;">' +
+              '<span class="time-saved-label">Hochgerechnet aufs Jahr</span>' +
+              '<span class="time-saved-value">' + hoursPerYear + ' Stunden</span>' +
             '</div>' +
           '</div>' +
-          '<div style="font-size:11px;color:var(--light-text);font-weight:300;">' + cat.description + '</div>' +
         '</div>' +
-      '</div>' +
-      '<div class="cat-right">' +
-        '<div class="cat-saving" id="saving-' + cat.id + '">' + fmt(getSaving(cat)) + '</div>' +
-        '<div class="cat-saving-label">pro Woche</div>' +
-      '</div>';
+        '<div class="cat-right">' +
+          '<div class="cat-saving priceless" id="saving-' + cat.id + '">unbezahlbar</div>' +
+          '<div class="cat-saving-label">pro Woche</div>' +
+        '</div>';
+    } else {
+      var sv = getSavingPerUnit(cat);
+      var totalSaving = getSaving(cat);
+      innerContent =
+        '<div class="cat-info">' +
+          '<div class="cat-name">' + cat.name + '</div>' +
+          '<div class="cat-detail">' + cat.detail + '</div>' +
+          '<div class="stepper-block">' +
+            '<div class="stepper-row">' +
+              '<span class="stepper-label">' + cat.unit + '</span>' +
+              '<div class="stepper-controls">' +
+                '<button class="stepper-btn" id="btn-minus-' + cat.id + '">−</button>' +
+                '<div class="stepper-divider"></div>' +
+                '<span class="stepper-val" id="val-' + cat.id + '">' + displayVal(v) + '</span>' +
+                '<div class="stepper-divider"></div>' +
+                '<button class="stepper-btn" id="btn-plus-' + cat.id + '">+</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="price-compare-block">' +
+              '<div class="price-field">' +
+                '<div class="price-field-label buy-label">🛒 Kaufpreis</div>' +
+                '<div class="price-field-input buy">' +
+                  '<span>€</span>' +
+                  '<input type="number" id="buy-' + cat.id + '" value="' + cat.buyPrice.toFixed(2) + '" min="0" step="0.01" placeholder="0.00">' +
+                '</div>' +
+                '<div class="price-field-unit">' + cat.unitShort + '</div>' +
+              '</div>' +
+              '<div class="price-field">' +
+                '<div class="price-field-label make-label">🌿 Selbst gemacht</div>' +
+                '<div class="price-field-input make">' +
+                  '<span>€</span>' +
+                  '<input type="number" id="make-' + cat.id + '" value="' + cat.makePrice.toFixed(2) + '" min="0" step="0.01" placeholder="0.00">' +
+                '</div>' +
+                '<div class="price-field-unit">Zutatenkosten ' + cat.unitShort + '</div>' +
+              '</div>' +
+              '<div class="saving-row">' +
+                '<span class="saving-row-label">Ersparnis diese Woche</span>' +
+                '<span class="saving-row-value' + (totalSaving < 0 ? ' negative' : '') + '" id="saving-row-val-' + cat.id + '">' +
+                  fmt(totalSaving) + ' (' + (sv >= 0 ? '+' : '') + fmtPrice(sv) + ' ' + cat.unitShort + ')' +
+                '</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="cat-right">' +
+          '<div class="cat-saving' + (totalSaving < 0 ? ' negative' : '') + '" id="saving-' + cat.id + '">' + fmt(totalSaving) + '</div>' +
+          '<div class="cat-saving-label">pro Woche</div>' +
+        '</div>';
+    }
+
+    card.innerHTML = '<div class="cat-icon">' + cat.icon + '</div>' + innerContent;
 
     container.appendChild(card);
 
-    (function(catId) {
+    (function(catId, catObj) {
       document.getElementById('card-' + catId).addEventListener('click', function(e) {
-        if (e.target.tagName === 'BUTTON') return;
+        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
         toggleCategory(catId);
       });
       document.getElementById('btn-minus-' + catId).addEventListener('click', function(e) {
@@ -895,7 +1217,24 @@ function buildCards() {
         e.stopPropagation();
         stepValue(catId, 1);
       });
-    })(cat.id);
+      if (!catObj.isPriceless) {
+        document.getElementById('buy-' + catId).addEventListener('input', function(e) {
+          e.stopPropagation();
+          state.buyPrices[catId] = parseFloat(this.value) || 0;
+          update();
+        });
+        document.getElementById('make-' + catId).addEventListener('input', function(e) {
+          e.stopPropagation();
+          state.makePrices[catId] = parseFloat(this.value) || 0;
+          update();
+        });
+        ['buy-' + catId, 'make-' + catId].forEach(function(inputId) {
+          document.getElementById(inputId).addEventListener('click', function(e) {
+            e.stopPropagation();
+          });
+        });
+      }
+    })(cat.id, cat);
   });
 
   updateButtonStates();
