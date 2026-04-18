@@ -104,17 +104,18 @@
   .category-card {
     display: flex;
     align-items: flex-start;
-    gap: 16px;
+    gap: 12px;
     cursor: pointer;
     user-select: none;
     transition: background 0.15s;
     border-radius: var(--radius);
-    padding: 16px 20px;
+    padding: 16px;
     margin-bottom: 10px;
     background: white;
     border: 1.5px solid var(--border);
     box-shadow: var(--shadow);
     flex-wrap: wrap;
+    overflow: hidden;
   }
 
   .category-card:active { background: var(--cream); }
@@ -134,7 +135,7 @@
 
   .category-card.active .cat-icon { background: white; }
 
-  .cat-info { flex: 1; min-width: 0; }
+  .cat-info { flex: 1; min-width: 0; overflow: hidden; }
 
   .cat-name {
     font-size: 15px;
@@ -149,7 +150,7 @@
     font-weight: 300;
   }
 
-  .cat-right { text-align: right; flex-shrink: 0; }
+  .cat-right { text-align: right; flex-shrink: 0; max-width: 90px; }
 
   .cat-saving {
     font-size: 16px;
@@ -175,6 +176,7 @@
     padding: 14px 0 4px;
     border-top: 1px solid var(--border);
     width: 100%;
+    box-sizing: border-box;
   }
 
   .category-card.active .stepper-block { display: block; }
@@ -183,8 +185,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 8px;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: nowrap;
   }
 
   .stepper-label {
@@ -192,6 +195,8 @@
     color: var(--mid);
     font-weight: 400;
     flex: 1;
+    min-width: 0;
+    padding-right: 4px;
   }
 
   .stepper-controls {
@@ -201,14 +206,15 @@
     border-radius: 10px;
     overflow: hidden;
     background: var(--cream);
+    flex-shrink: 0;
   }
 
   .stepper-btn {
-    width: 40px;
-    height: 36px;
+    width: 44px;
+    height: 40px;
     border: none;
     background: transparent;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 300;
     color: var(--terracotta);
     cursor: pointer;
@@ -218,6 +224,7 @@
     transition: background 0.1s;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
+    flex-shrink: 0;
   }
 
   .stepper-btn:active { background: var(--terracotta-light); }
@@ -231,12 +238,12 @@
   }
 
   .stepper-val {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
-    min-width: 44px;
+    min-width: 48px;
     text-align: center;
     color: var(--charcoal);
-    padding: 0 4px;
+    padding: 0 6px;
   }
 
   /* Price comparison rows */
@@ -245,7 +252,7 @@
     padding-top: 12px;
     border-top: 1px solid rgba(44,44,42,0.07);
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
     gap: 10px;
   }
 
@@ -272,8 +279,10 @@
     background: white;
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 7px 10px;
+    padding: 7px 8px;
     gap: 4px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .price-field-input.buy { border-color: rgba(44,44,42,0.15); }
@@ -292,6 +301,7 @@
     font-weight: 500;
     color: var(--charcoal);
     width: 100%;
+    min-width: 0;
     outline: none;
     text-align: right;
   }
