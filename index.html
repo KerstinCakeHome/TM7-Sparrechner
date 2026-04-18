@@ -28,9 +28,9 @@
     --radius: 16px;
     --radius-sm: 10px;
   }
- 
+
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
- 
+
   body {
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
     background: var(--cream);
@@ -38,7 +38,7 @@
     min-height: 100vh;
     padding-bottom: env(safe-area-inset-bottom, 20px);
   }
- 
+
   header {
     background: var(--charcoal);
     color: white;
@@ -46,7 +46,7 @@
     padding-top: calc(48px + env(safe-area-inset-top, 0px));
     text-align: center;
   }
- 
+
   .header-eyebrow {
     font-size: 11px;
     letter-spacing: 3px;
@@ -54,7 +54,7 @@
     color: rgba(255,255,255,0.5);
     margin-bottom: 10px;
   }
- 
+
   header h1 {
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 32px;
@@ -62,18 +62,18 @@
     line-height: 1.2;
     margin-bottom: 8px;
   }
- 
+
   header h1 span { color: #E8A87C; }
- 
+
   .header-sub {
     font-size: 14px;
     color: rgba(255,255,255,0.6);
     font-weight: 300;
     line-height: 1.5;
   }
- 
+
   .main { padding: 24px 16px; max-width: 600px; margin: 0 auto; }
- 
+
   .section-title {
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 20px;
@@ -81,9 +81,9 @@
     color: var(--charcoal);
     margin: 28px 0 16px;
   }
- 
+
   .section-title:first-child { margin-top: 0; }
- 
+
   .section-hint {
     font-size: 12px;
     color: var(--light-text);
@@ -91,7 +91,7 @@
     margin-top: -10px;
     font-weight: 300;
   }
- 
+
   .card {
     background: white;
     border-radius: var(--radius);
@@ -100,7 +100,7 @@
     box-shadow: var(--shadow);
     border: 1px solid var(--border);
   }
- 
+
   .category-card {
     display: flex;
     align-items: flex-start;
@@ -117,10 +117,10 @@
     flex-wrap: wrap;
     overflow: hidden;
   }
- 
+
   .category-card:active { background: var(--cream); }
   .category-card.active { border-color: var(--terracotta); background: var(--terracotta-light); }
- 
+
   .cat-icon {
     width: 48px;
     height: 48px;
@@ -132,44 +132,44 @@
     font-size: 22px;
     flex-shrink: 0;
   }
- 
+
   .category-card.active .cat-icon { background: white; }
- 
+
   .cat-info { flex: 1; min-width: 0; overflow: hidden; }
- 
+
   .cat-name {
     font-size: 15px;
     font-weight: 500;
     color: var(--charcoal);
     margin-bottom: 2px;
   }
- 
+
   .cat-detail {
     font-size: 12px;
     color: var(--mid);
     font-weight: 300;
   }
- 
+
   .cat-right { text-align: right; flex-shrink: 0; max-width: 90px; }
- 
+
   .cat-saving {
     font-size: 16px;
     font-weight: 600;
     color: var(--sage);
   }
- 
+
   .cat-saving-label {
     font-size: 10px;
     color: var(--light-text);
     letter-spacing: 0.5px;
     text-transform: uppercase;
   }
- 
+
   .category-card.active .cat-saving { color: var(--terracotta-dark); }
- 
+
   /* negative saving = buying is cheaper */
   .cat-saving.negative { color: #A33030; }
- 
+
   .stepper-block {
     margin-top: 12px;
     display: none;
@@ -178,27 +178,24 @@
     width: 100%;
     box-sizing: border-box;
   }
- 
+
   .category-card.active .stepper-block { display: block; }
- 
+
   .stepper-row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 8px;
-    margin-bottom: 10px;
-    flex-wrap: nowrap;
+    margin-bottom: 12px;
   }
- 
+
   .stepper-label {
     font-size: 12px;
     color: var(--mid);
     font-weight: 400;
-    flex: 1;
-    min-width: 0;
-    padding-right: 4px;
+    width: 100%;
   }
- 
+
   .stepper-controls {
     display: flex;
     align-items: center;
@@ -207,14 +204,15 @@
     overflow: hidden;
     background: var(--cream);
     flex-shrink: 0;
+    width: 100%;
   }
- 
+
   .stepper-btn {
-    width: 44px;
-    height: 40px;
+    flex: 0 0 56px;
+    height: 44px;
     border: none;
     background: transparent;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 300;
     color: var(--terracotta);
     cursor: pointer;
@@ -224,28 +222,27 @@
     transition: background 0.1s;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
-    flex-shrink: 0;
   }
- 
+
   .stepper-btn:active { background: var(--terracotta-light); }
   .stepper-btn:disabled { color: var(--light-text); }
- 
+
   .stepper-divider {
     width: 1px;
     height: 24px;
     background: var(--border);
     flex-shrink: 0;
   }
- 
+
   .stepper-val {
-    font-size: 15px;
+    flex: 1;
+    font-size: 16px;
     font-weight: 600;
-    min-width: 48px;
     text-align: center;
     color: var(--charcoal);
-    padding: 0 6px;
+    padding: 0 8px;
   }
- 
+
   /* Price comparison rows */
   .price-compare-block {
     margin-top: 12px;
@@ -255,13 +252,13 @@
     grid-template-columns: minmax(0,1fr) minmax(0,1fr);
     gap: 10px;
   }
- 
+
   .price-field {
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
- 
+
   .price-field-label {
     font-size: 10px;
     text-transform: uppercase;
@@ -269,10 +266,10 @@
     color: var(--light-text);
     font-weight: 500;
   }
- 
+
   .price-field-label.buy-label { color: var(--mid); }
   .price-field-label.make-label { color: var(--sage); }
- 
+
   .price-field-input {
     display: flex;
     align-items: center;
@@ -284,15 +281,15 @@
     width: 100%;
     box-sizing: border-box;
   }
- 
+
   .price-field-input.buy { border-color: rgba(44,44,42,0.15); }
   .price-field-input.make { border-color: rgba(91,123,95,0.3); }
- 
+
   .price-field-input span {
     font-size: 13px;
     color: var(--mid);
   }
- 
+
   .price-field-input input {
     border: none;
     background: transparent;
@@ -305,14 +302,14 @@
     outline: none;
     text-align: right;
   }
- 
+
   .price-field-unit {
     font-size: 10px;
     color: var(--light-text);
     font-weight: 300;
     text-align: right;
   }
- 
+
   .saving-row {
     grid-column: 1 / -1;
     display: flex;
@@ -323,21 +320,21 @@
     padding: 8px 12px;
     margin-top: 2px;
   }
- 
+
   .saving-row-label {
     font-size: 12px;
     color: var(--mid);
     font-weight: 400;
   }
- 
+
   .saving-row-value {
     font-size: 14px;
     font-weight: 600;
     color: var(--sage);
   }
- 
+
   .saving-row-value.negative { color: #A33030; }
- 
+
   .results-card {
     background: var(--charcoal);
     color: white;
@@ -349,7 +346,7 @@
     z-index: 10;
     box-shadow: 0 4px 32px rgba(44,44,42,0.25);
   }
- 
+
   .results-label {
     font-size: 11px;
     letter-spacing: 2px;
@@ -357,7 +354,7 @@
     color: rgba(255,255,255,0.4);
     margin-bottom: 4px;
   }
- 
+
   .results-amount {
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 48px;
@@ -366,41 +363,41 @@
     color: #E8A87C;
     margin-bottom: 2px;
   }
- 
+
   .results-period {
     font-size: 13px;
     color: rgba(255,255,255,0.5);
     margin-bottom: 20px;
     font-weight: 300;
   }
- 
+
   .results-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 12px;
   }
- 
+
   .results-item {
     background: rgba(255,255,255,0.07);
     border-radius: 10px;
     padding: 12px;
     text-align: center;
   }
- 
+
   .results-item-val {
     font-size: 18px;
     font-weight: 600;
     color: white;
     margin-bottom: 2px;
   }
- 
+
   .results-item-lbl {
     font-size: 10px;
     color: rgba(255,255,255,0.4);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
- 
+
   .chart-container {
     background: white;
     border-radius: var(--radius);
@@ -409,18 +406,18 @@
     box-shadow: var(--shadow);
     border: 1px solid var(--border);
   }
- 
+
   .chart-title {
     font-size: 13px;
     font-weight: 500;
     color: var(--mid);
     margin-bottom: 16px;
   }
- 
+
   .bar-chart { display: flex; flex-direction: column; gap: 10px; }
- 
+
   .bar-row { display: flex; align-items: center; gap: 10px; }
- 
+
   .bar-name {
     font-size: 12px;
     color: var(--mid);
@@ -429,7 +426,7 @@
     text-align: right;
     flex-shrink: 0;
   }
- 
+
   .bar-track {
     flex: 1;
     height: 28px;
@@ -437,7 +434,7 @@
     border-radius: 6px;
     overflow: hidden;
   }
- 
+
   .bar-fill {
     height: 100%;
     border-radius: 6px;
@@ -449,17 +446,17 @@
     padding-right: 8px;
     min-width: 28px;
   }
- 
+
   .bar-fill.inactive { background: var(--border); min-width: 0; }
   .bar-fill.negative-bar { background: #C84040; }
- 
+
   .bar-amount {
     font-size: 11px;
     font-weight: 600;
     color: white;
     white-space: nowrap;
   }
- 
+
   .amortization-card {
     background: var(--gold-light);
     border: 1px solid rgba(184,137,26,0.2);
@@ -467,7 +464,7 @@
     padding: 20px;
     margin-bottom: 12px;
   }
- 
+
   .amort-title {
     font-size: 13px;
     font-weight: 500;
@@ -479,7 +476,7 @@
     align-items: center;
     gap: 8px;
   }
- 
+
   .amort-title::before {
     content: '';
     display: inline-block;
@@ -488,9 +485,9 @@
     background: var(--gold);
     border-radius: 50%;
   }
- 
+
   .amort-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
- 
+
   .amort-val {
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 26px;
@@ -499,26 +496,26 @@
     line-height: 1;
     margin-bottom: 2px;
   }
- 
+
   .amort-lbl {
     font-size: 11px;
     color: var(--mid);
     font-weight: 300;
   }
- 
+
   .price-input-group {
     display: flex;
     align-items: center;
     gap: 12px;
   }
- 
+
   .price-input-group label {
     font-size: 14px;
     color: var(--mid);
     font-weight: 400;
     flex: 1;
   }
- 
+
   .price-input {
     display: flex;
     align-items: center;
@@ -529,13 +526,13 @@
     gap: 4px;
     width: 140px;
   }
- 
+
   .price-input span {
     font-size: 15px;
     color: var(--mid);
     font-weight: 300;
   }
- 
+
   .price-input input {
     border: none;
     background: transparent;
@@ -547,7 +544,7 @@
     outline: none;
     text-align: right;
   }
- 
+
   .disclaimer {
     background: var(--sage-light);
     border-radius: var(--radius-sm);
@@ -555,19 +552,19 @@
     margin-top: 24px;
     margin-bottom: 32px;
   }
- 
+
   .disclaimer p {
     font-size: 11px;
     color: var(--mid);
     line-height: 1.6;
     font-weight: 300;
   }
- 
+
   .disclaimer strong {
     font-weight: 500;
     color: var(--sage);
   }
- 
+
   .active-count {
     display: inline-flex;
     align-items: center;
@@ -582,7 +579,7 @@
     margin-left: 8px;
     vertical-align: middle;
   }
- 
+
   .priceless-block {
     margin-top: 12px;
     padding: 14px 0 4px;
@@ -591,7 +588,7 @@
     display: none;
   }
   .category-card.active .priceless-block { display: block; }
- 
+
   .priceless-banner {
     background: var(--gold-light);
     border: 1px solid rgba(184,137,26,0.25);
@@ -604,7 +601,7 @@
   }
   .priceless-star { font-size: 20px; flex-shrink: 0; }
   .priceless-text { font-size: 12px; color: var(--gold); font-weight: 500; line-height: 1.4; }
- 
+
   .time-saved-row {
     display: flex;
     align-items: center;
@@ -615,9 +612,9 @@
   }
   .time-saved-label { font-size: 12px; color: var(--mid); }
   .time-saved-value { font-size: 14px; font-weight: 600; color: var(--gold); }
- 
+
   .cat-saving.priceless { color: var(--gold); font-size: 13px; }
- 
+
   @media (min-width: 600px) {
     .main { padding: 32px 24px; }
     header h1 { font-size: 40px; }
@@ -626,15 +623,15 @@
 </style>
 </head>
 <body>
- 
+
 <header>
   <div class="header-eyebrow">Thermomix® TM7</div>
   <h1>Ihr persönlicher<br><span>Sparrechner</span></h1>
   <p class="header-sub">Berechnen Sie, wie viel Sie mit dem<br>Thermomix® wöchentlich sparen können.</p>
 </header>
- 
+
 <div class="main">
- 
+
   <div class="results-card" id="resultsCard">
     <div class="results-label">Ihre wöchentliche Ersparnis</div>
     <div class="results-amount" id="totalSaving">0 €</div>
@@ -654,14 +651,14 @@
       </div>
     </div>
   </div>
- 
+
   <p class="section-title">Kategorien auswählen <span id="activeBadge"></span></p>
   <p class="section-hint">Tippen Sie auf eine Kategorie, um sie zu aktivieren und die Preise anzupassen.</p>
- 
+
   <div id="categoriesContainer"></div>
- 
+
   <p class="section-title">Gerätekonfiguration</p>
- 
+
   <div class="card">
     <div class="price-input-group" style="margin-bottom:16px;">
       <label>Kaufpreis Thermomix® TM7</label>
@@ -679,7 +676,7 @@
       </div>
     </div>
   </div>
- 
+
   <div class="amortization-card" id="amortCard" style="display:none;">
     <div class="amort-title">Amortisationsrechnung</div>
     <div class="amort-grid">
@@ -701,20 +698,20 @@
       </div>
     </div>
   </div>
- 
+
   <p class="section-title">Kostenvergleich pro Woche</p>
- 
+
   <div class="chart-container">
     <div class="chart-title">Ersparnis nach Kategorie (€/Woche)</div>
     <div class="bar-chart" id="barChart"></div>
   </div>
- 
+
   <div class="disclaimer">
     <p><strong>Hinweis:</strong> Alle Berechnungen sind Richtwerte und dienen der Veranschaulichung. Die tatsächlichen Ersparnisse hängen von Ihren persönlichen Einkaufsgewohnheiten, regionalen Preisen und der tatsächlichen Nutzungsintensität des Thermomix® ab. Preisvergleiche basieren auf durchschnittlichen deutschen Supermarkt- und Lieferdienstpreisen (Stand 2026). Keine Gewähr für die Richtigkeit der Angaben.</p>
   </div>
- 
+
 </div>
- 
+
 <script>
 // buyPrice = Kaufpreis pro Einheit im Laden
 // makePrice = Zutatenkosten pro Einheit selbst gemacht
@@ -954,39 +951,39 @@ var CATEGORIES = [
     minutesSaved: 25,
   },
 ];
- 
+
 var state = { active: {}, values: {}, buyPrices: {}, makePrices: {} };
- 
+
 CATEGORIES.forEach(function(cat) {
   state.active[cat.id] = false;
   state.values[cat.id] = cat.defaultVal;
   state.buyPrices[cat.id] = cat.buyPrice;
   state.makePrices[cat.id] = cat.makePrice;
 });
- 
+
 function getSavingPerUnit(cat) {
   if (cat.isPriceless) return 0;
   return (state.buyPrices[cat.id] || 0) - (state.makePrices[cat.id] || 0);
 }
- 
+
 function getSaving(cat) {
   if (cat.isPriceless) return 0;
   return state.values[cat.id] * getSavingPerUnit(cat);
 }
- 
+
 function fmt(n) {
   if (Math.abs(n) < 10) return n.toFixed(2).replace('.', ',') + ' €';
   return Math.round(n).toLocaleString('de-DE') + ' €';
 }
- 
+
 function fmtPrice(n) {
   return n.toFixed(2).replace('.', ',') + ' €';
 }
- 
+
 function displayVal(v) {
   return Number.isInteger(v) ? String(v) : v.toFixed(1).replace('.', ',');
 }
- 
+
 function calcTotal() {
   var total = 0;
   CATEGORIES.forEach(function(cat) {
@@ -994,7 +991,7 @@ function calcTotal() {
   });
   return total;
 }
- 
+
 function update() {
   var totalWeek = calcTotal();
   var totalYear = totalWeek * 52;
@@ -1002,11 +999,11 @@ function update() {
   var devicePrice = parseFloat(document.getElementById('devicePrice').value) || 1599;
   var subCostMonth = parseFloat(document.getElementById('subscriptionCost').value) || 4.99;
   var netWeekly = totalWeek - (subCostMonth / 4.33);
- 
+
   document.getElementById('totalSaving').textContent = fmt(totalWeek);
   document.getElementById('yearSaving').textContent = fmt(totalYear);
   document.getElementById('activeCats').textContent = activeCount;
- 
+
   var amortCard = document.getElementById('amortCard');
   if (netWeekly > 0) {
     var months = (devicePrice / netWeekly) / 4.33;
@@ -1021,10 +1018,10 @@ function update() {
     document.getElementById('amortTime').textContent = '–';
     amortCard.style.display = 'none';
   }
- 
+
   var badge = document.getElementById('activeBadge');
   badge.innerHTML = activeCount > 0 ? '<span class="active-count">' + activeCount + '</span>' : '';
- 
+
   // Update cat-saving displays for active cards
   CATEGORIES.forEach(function(cat) {
     if (cat.isPriceless) {
@@ -1050,16 +1047,16 @@ function update() {
       rowEl.className = 'saving-row-value' + (total < 0 ? ' negative' : '');
     }
   });
- 
+
   updateChart();
 }
- 
+
 function updateChart() {
   var container = document.getElementById('barChart');
   var activeCats = CATEGORIES.filter(function(c) { return state.active[c.id]; });
   var savings = activeCats.map(function(c) { return Math.abs(getSaving(c)); });
   var maxSaving = Math.max.apply(null, savings.concat([1]));
- 
+
   container.innerHTML = '';
   CATEGORIES.forEach(function(cat) {
     var saving = state.active[cat.id] ? getSaving(cat) : 0;
@@ -1076,7 +1073,7 @@ function updateChart() {
     container.appendChild(row);
   });
 }
- 
+
 function toggleCategory(id) {
   state.active[id] = !state.active[id];
   var card = document.getElementById('card-' + id);
@@ -1087,7 +1084,7 @@ function toggleCategory(id) {
   }
   update();
 }
- 
+
 function stepValue(id, direction) {
   var cat = null;
   for (var i = 0; i < CATEGORIES.length; i++) {
@@ -1100,7 +1097,7 @@ function stepValue(id, direction) {
   update();
   updateButtonStates();
 }
- 
+
 function updateButtonStates() {
   CATEGORIES.forEach(function(cat) {
     var minBtn = document.getElementById('btn-minus-' + cat.id);
@@ -1110,18 +1107,18 @@ function updateButtonStates() {
     maxBtn.disabled = state.values[cat.id] >= cat.max;
   });
 }
- 
+
 function buildCards() {
   var container = document.getElementById('categoriesContainer');
   container.innerHTML = '';
- 
+
   CATEGORIES.forEach(function(cat) {
     var card = document.createElement('div');
     card.className = 'category-card' + (state.active[cat.id] ? ' active' : '');
     card.id = 'card-' + cat.id;
- 
+
     var v = state.values[cat.id];
- 
+
     var innerContent;
     if (cat.isPriceless) {
       var minutesPerWeek = v * cat.minutesSaved;
@@ -1209,11 +1206,11 @@ function buildCards() {
           '<div class="cat-saving-label">pro Woche</div>' +
         '</div>';
     }
- 
+
     card.innerHTML = '<div class="cat-icon">' + cat.icon + '</div>' + innerContent;
- 
+
     container.appendChild(card);
- 
+
     (function(catId, catObj) {
       document.getElementById('card-' + catId).addEventListener('click', function(e) {
         if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
@@ -1247,12 +1244,12 @@ function buildCards() {
     })(cat.id, cat);
   });
 
-    updateButtonStates();
+  updateButtonStates();
 }
 
 document.getElementById('devicePrice').addEventListener('input', update);
 document.getElementById('subscriptionCost').addEventListener('input', update);
- 
+
 buildCards();
 update();
 </script>
