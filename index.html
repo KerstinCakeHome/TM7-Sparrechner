@@ -665,7 +665,7 @@
       <label>Kaufpreis Thermomix® TM7</label>
       <div class="price-input">
         <span>€</span>
-        <input type="number" id="devicePrice" value="1599" min="0" max="9999" step="1">
+        <input type="number" id="devicePrice" value="1549" min="0" max="9999" step="1">
       </div>
     </div>
     <div style="height:1px;background:var(--border);margin-bottom:16px;"></div>
@@ -997,7 +997,7 @@ function update() {
   var totalWeek = calcTotal();
   var totalYear = totalWeek * 52;
   var activeCount = CATEGORIES.filter(function(c) { return state.active[c.id]; }).length;
-  var devicePrice = parseFloat(document.getElementById('devicePrice').value) || 1599;
+  var devicePrice = parseFloat(document.getElementById('devicePrice').value) || 1549;
   var subCostMonth = parseFloat(document.getElementById('subscriptionCost').value) || 4.99;
   var netWeekly = totalWeek - (subCostMonth / 4.33);
 
